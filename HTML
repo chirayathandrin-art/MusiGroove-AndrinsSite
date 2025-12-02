@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MusiGroove — Discover by Mood</title>
+  <style>
+    /* === MusiGroove — Blue · White · Black === */
+    :root{
+      --bg: #000000;            /* Black */
+      --elev: #0b0f14;          /* Near-black surface */
+      --text: #ffffff;          /* White text */
+      --muted: #cfd6df;         /* Soft gray for secondary text */
+      --brand: #1e90ff;         /* Primary Blue */
+      --accent: #3ba0ff;        /* Lighter Blue for active states */
+      --danger: #1e90ff;        /* Keep within 3-color scheme */
+      --ring: 2px solid rgba(30,144,255,.35);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #000, #06080c);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+      line-height: 1.5;
+    }
+
+    .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
+      position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #0f1722;
+    }
+    .brand { display: flex; align-items: center; gap: 8px; }
+    .logo { font-size: 20px; }
+    .appname { font-size: 16px; margin: 0; }
+
+    .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab-btn {
+      background: #0b1118; color: var(--text); border: 1px solid #142033; padding: 8px 12px;
+      border-radius: 999px; cursor: pointer;
+    }
+    .tab-btn.active { background: var(--brand); border-color: var(--brand); }
+
+    .container { padding: 16px; max-width: 1100px; margin: 0 auto; }
+
+    .hero { display: flex; justify-content: center; margin: 12px 0 16px; }
+    #search {
+      width: 100%; max-width: 720px; padding: 12px 14px; border-radius: 999px;
+      border: 1px solid #112233; background: #0a0f14; color: var(--text);
+    }
+    #search:focus { outline: none; box-shadow: 0 0 0 3px rgba(30,144,255,.35); }
+
+    .filters { display: grid; gap: 10px; grid-template-columns: 1fr; margin-bottom: 12px; }
+    .group-label { color: var(--muted); font-size: 12px; margin-right: 8px; }
+    .chip-group { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+
+    .chip, .chip-toggle {
+      padding: 6px 10px; border-radius: 999px; border: 1px solid #142033; background: #0b1118; color: var(--text);
+      cursor: pointer; user-select: none; font-size: 13px;
+    }
+    .chip.active, .chip-toggle[aria-pressed="true"] {
+      background: var(--accent); color: #06111f; border-color: var(--accent);
+    }
+    .chip:hover, .chip-toggle:hover { border-color: #1b2c44; }
+
+    .section h3 { margin: 16px 4px; font-size: 18px; }
+
+    .grid {
+      display: grid; gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+    .card {
+      background: #0a0f14; border: 1px solid #111827; border-radius: var(--radius); overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .card .cover {
+      height: 140px; background: linear-gradient(135deg, #0b1220, #05080c); display: grid; place-items: center; font-size: 40px;
+    }
+    .card .meta { padding: 10px; display: grid; gap: 6px; }
+    .card .title { font-weight: 600; }
+    .card .sub { color: var(--muted); font-size: 12px; }
+    .card .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .card button {
+      background: var(--brand); color: white; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer;
+    }
+    .card button.secondary { background: transparent; border: 1px solid #173454; color: var(--text); }
+
+    /* Lists / Forms */
+    .list { display: grid; gap: 10px; margin-top: 12px; }
+    .row { display: flex; gap: 8px; }
+    .row input { flex: 1; padding: 8px 10px; border-radius: 8px; border: 1px solid #112233; background: #0a0f14; color: var(--text); }
+    .row button { padding: 8px 12px; border-radius: 8px; border: 1px solid #173454; background: var(--brand); color: white; }
+
+    .prefs .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+
+    /* Player */
+    .player {
+      position: sticky; bottom: 0; left: 0; right: 0;
+      display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center;
+      padding: 10px 16px; background: rgba(0,0,0,0.85); border-top: 1px solid #0f1722; backdrop-filter: blur(6px);
+    }
+    .player button { background: #0b1118; color: var(--text); border: 1px solid #142033; padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+    .queue ol { padding-left: 18px; margin: 8px 0 0; }
+
+    /* Tabs */
+    .tab { display: none; }
+    .tab.active { display: block; }
+
+    /* Modal */
+    dialog {
+      border: 1px solid #173454; border-radius: var(--radius); background: #0a0f14; color: var(--text);
+      max-width: 520px; width: calc(100% - 24px); padding: 16px;
+    }
+    .modal-row { margin: 10px 0; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+    dialog::backdrop { background: #0009; }
+
+    /* === Blog Grid & Reader === */
+    .blog-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+    .post-card {
+      background: #0a0f14;
+      border: 1px solid #111827;
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 160px auto;
+      cursor: pointer;
+      transition: transform .12s ease, border-color .12s ease;
+    }
+    .post-card:hover { transform: translateY(-2px); border-color: #173454; }
+    .post-card .thumb { width: 100%; height: 160px; object-fit: cover; background: #05080c; display: block; }
+    .post-card .info { padding: 12px; display: grid; gap: 6px; }
+    .post-card .title { font-weight: 700; }
+    .post-card .excerpt { color: var(--muted); font-size: 0.95rem; }
+    .post-card .meta { color: var(--muted); font-size: 12px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .tag { font-size: 12px; padding: 4px 8px; border-radius: 999px; border: 1px solid #173454; color: var(--text); background: #0b1118; }
+
+    #post-viewer {
+      border: 1px solid #173454;
+      border-radius: var(--radius);
+      background: #0a0f14;
+      color: var(--text);
+      max-width: 860px;
+      width: calc(100% - 24px);
+      padding: 0;
+    }
+    .post-view { display: grid; }
+    .post-hero { position: relative; height: 280px; overflow: hidden; background: #05080c; }
+    .post-hero img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(1) contrast(1.05); }
+    .post-hero .overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, #0000, #000a 60%, #000e);
+      display: flex; flex-direction: column; justify-content: end; padding: 16px;
+    }
+    .post-hero h3 { margin: 0; }
+    .post-hero .meta { color: var(--muted); margin-top: 4px; }
+    .post-body { padding: 16px; line-height: 1.7; display: grid; gap: 12px; }
+    .post-body p { margin: 0; }
+    .post-body img { width: 100%; border-radius: 10px; border: 1px solid #111827; }
+    .post-footer { padding: 16px; border-top: 1px solid #111827; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .btn { background: var(--brand); color: #fff; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+
+    @media (max-width: 540px){
+      .post-hero { height: 220px; }
+    }
+
+    /* Focus */
+    button:focus-visible, .chip:focus-visible, .chip-toggle:focus-visible, input:focus-visible {
+      outline: none; box-shadow: 0 0 0 3px rgba(30,144,255,.35);
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <header class="topbar" role="banner">
+      <span class="logo" aria-hidden="true">🎧</span>
+      <h1 class="Appname">MusiGroove</h1>
+    </div>
+    <nav class="nav" role="navigation" aria-
+         
+         label="Main">
+      <button class="tab-btn active" data-tab="discover" aria-pressed="true">Discover</button>
+      <button class="tab-btn" data-tab="my-playlists">My Playlists</button>
+      <button class="tab-btn" data-tab="blog">Blog</button>
+      <button class="tab-btn" data-tab="profile">Profile</button>
+      <div class="navigationbar">
+      <ul>
+        <li><a href="#">HOME</a><li>
+        <li><a href="#">DISCOVER</a><li>
+        <li><a href="#">MYPLAYLIST</a><li>
+        <li><a href="#">BLOGS</a><li>
+        <li><a href="#">PROFILE</a><li>
+      </ul>
+    </nav>
+      
+  </header>
+
+  <main id="app" class="container">
+    <!-- Discover -->
+    <section id="discover" class="tab active" role="region" aria-labelledby="discover-heading">
+      <h2 id="discover-heading" class="visually-hidden">Discover</h2>
+
+      <div class="hero">
+        <label for="search" class="visually-hidden">Search tracks</label>
+        <input id="search" type="search" placeholder="Search by song, artist, or vibe…" autocomplete="off" />
+      </div>
+
+      <div class="filters" role="group" aria-label="Filters">
+        <div class="chip-group" data-filter="mood" aria-label="Mood">
+          <span class="group-label">Mood</span>
+          <!-- chips injected by JS -->
+        </div>
+        <div class="chip-group" data-filter="genre" aria-label="Genre">
+          <span class="group-label">Genre</span>
+        </div>
+        <div class="chip-group" data-filter="energy" aria-label="Energy">
+          <span class="group-label">Energy</span>
+        </div>
+      </div>
+
+      <section aria-labelledby="rec-heading" class="section">
+        <h3 id="rec-heading">Recommended for you</h3>
+        <div id="results" class="grid"></div>
+      </section>
+    </section>
+
+    <!-- My Playlists -->
+    <section id="my-playlists" class="tab" role="region" aria-labelledby="pl-heading">
+      <h2 id="pl-heading">My Playlists</h2>
+      <form id="create-playlist" class="row">
+        <input type="text" id="pl-name" placeholder="New playlist name" aria-label="New playlist name" />
+        <button type="submit">Create</button>
+      </form>
+      <div id="playlist-list" class="list"></div>
+    </section>
+
+    <!-- Blog -->
+    <section id="blog" class="tab" role="region" aria-labelledby="blog-heading">
+      <h2 id="blog-heading">MusiGroove Blog</h2>
+      <div id="blog-grid" class="blog-grid"></div>
+    </section>
+
+    <!-- Profile -->
+    <section id="Profile" class="tab" role="region" aria-labelledby="profile-heading">
+      <h2 id="profile-heading">Profile & Preferences</h2>
+      <form id="prefs-form" class="prefs">
+        <fieldset>
+          <legend>Default Mood</legend>
+          <div id="pref-mood" class="chip-row"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Favorite Genres (up to 3)</legend>
+          <div id="pref-genre" class="chip-row"></div>
+        </fieldset>
+        <button type="submit">Save Preferences</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Player Bar -->
+  <footer class="player" role="contentinfo" aria-label="Player">
+    <div id="now-playing">Nothing playing</div>
+    <div class="controls">
+      <button id="prev" aria-label="Previous">⏮</button>
+      <button id="play" aria-label="Play/Pause">▶️</button>
+      <button id="next" aria-label="Next">⏭</button>
+    </div>
+    <div class="queue">
+      <button id="queue-btn" aria-expanded="false" aria-controls="queue-list">Queue ▾</button>
+      <ol id="queue-list" hidden></ol>
+    </div>
+  </footer>
+
+  <!-- Onboarding Modal -->
+  <dialog id="onboarding" aria-labelledby="onboard-title">
+    <h2 id="onboard-title">Tell us your vibe</h2>
+    <form method="dialog" id="onboard-form">
+      <div class="modal-row">
+        <label>Mood</label>
+        <div id="ob-moods" class="chip-row"></div>
+      </div>
+      <div class="modal-row">
+        <label>Pick up to 3 genres</label>
+        <div id="ob-genres" class="chip-row"></div>
+      </div>
+      <menu class="modal-actions">
+        <button value="cancel" id="skip-onboard">Skip</button>
+        <button id="save-onboard" value="default">Save</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <!-- Blog Reader -->
+  <dialog id="post-viewer" aria-labelledby="post-title">
+    <article class="post-view">
+      <header class="post-hero">
+        <img id="post-cover" alt="" />
+        <div class="overlay">
+          <h3 id="post-title"></h3>
+          <p id="post-meta" class="meta"></p>
+        </div>
+      </header>
+      <div id="post-body" class="post-body"></div>
+      <footer class="post-footer">
+        <div id="post-tags" class="tags"></div>
+        <button id="close-post" class="btn">Close</button>
+      </footer>
+    </article>
+  </dialog>
+
+  <script>
+    /* ===== MusiGroove — Integrated SPA (Discover, Playlists, Blog, Profile) ===== */
+
+    /* ---- Config: Moods, Genres, Energy ---- */
+    const MOODS = ["Happy", "Chill", "Sad", "Energetic", "Romantic", "Focus"];
+    const GENRES = ["Pop", "Hip-Hop", "R&B", "Rock", "Indie", "EDM", "Jazz", "Classical", "Lo-fi"];
+    const ENERGY = ["Low", "Medium", "High"];
+
+    /* ---- Sample Catalog (mock) ---- */
+    const TRACKS = [
+      { id: 1, title: "Neon Skies", artist: "Luna Nova", genres: ["Indie","Pop"], mood: "Chill", energy: "Low", cover:"🌌", duration: 194 },
+      { id: 2, title: "Heartbeat High", artist: "PulseWave", genres: ["EDM"], mood: "Energetic", energy: "High", cover:"💓", duration: 212 },
+      { id: 3, title: "Coffee & Rain", artist: "Soft Static", genres: ["Lo-fi","Jazz"], mood: "Focus", energy: "Low", cover:"☕", duration: 168 },
+      { id: 4, title: "Afterglow", artist: "Midnight Talk", genres: ["R&B"], mood: "Romantic", energy: "Medium", cover:"✨", duration: 205 },
+      { id: 5, title: "Paper Planes", artist: "Sunday Drive", genres: ["Indie","Rock"], mood: "Happy", energy: "Medium", cover:"🛩️", duration: 199 },
+      { id: 6, title: "Blue Window", artist: "Echo Harbor", genres: ["Rock"], mood: "Sad", energy: "Medium", cover:"🪟", duration: 231 },
+      { id: 7, title: "City Lights", artist: "Violet Loop", genres: ["Pop"], mood: "Happy", energy: "High", cover:"🌃", duration: 188 },
+      { id: 8, title: "Monochrome", artist: "Glass & Grain", genres: ["Classical"], mood: "Focus", energy: "Low", cover:"🎼", duration: 240 },
+      { id: 9, title: "Velvet Night", artist: "Noir Bloom", genres: ["R&B","Jazz"], mood: "Romantic", energy: "Low", cover:"🌙", duration: 210 },
+      { id: 10, title: "Run Wild", artist: "Street Circuit", genres: ["Hip-Hop"], mood: "Energetic", energy: "High", cover:"🏃", duration: 176 },
+    ];
+
+    /* ---- Blog Data (edit-friendly) ---- */
+    const BLOG_POSTS = [
+      {
+        id: 1,
+        title: "Soundtrack to a Better Day",
+        date: "2025-10-01",
+        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200&auto=format&fit=crop",
+        excerpt: "Simple ways to use music to nudge your mood toward calm or uplift.",
+        tags: ["Mood", "Getting Started"],
+        content: [
+          "Music is a fast, friendly way to shift how you feel. Try two quick playlists: one to ground you and one to lift you.",
+          "Tip: Keep the first track familiar—your brain recognizes it and settles faster.",
+          "https://images.unsplash.com/photo-1510915228340-29c85a43dcfe?q=80&w=1200&auto=format&fit=crop"
+        ]
+      },
+      {
+        id: 2,
+        title: "Focus Flow: Find Your Deep Work Sound",
+        date: "2025-10-05",
+        cover: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=1200&auto=format&fit=crop",
+        excerpt: "Lo‑fi, classical, and ambient textures that help you sink into flow.",
+        tags: ["Focus", "Lo‑fi", "Classical"],
+        content: [
+          "If words distract you, try instrumental: lo‑fi beats, soft piano, or strings.",
+          "Use 45–60 minute sessions; pause the music during breaks to reset your attention."
+        ]
+      },
+      {
+        id: 3,
+        title: "Move to the Beat",
+        date: "2025-10-12",
+        cover: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=1200&auto=format&fit=crop",
+        excerpt: "High‑energy tracks to fuel a quick walk, lift, or room dance.",
+        tags: ["Energy", "Workout"],
+        content: [
+          "Pick 3 songs that make you want to move. Start easy, build pace, finish with a celebration track.",
+          "Short on time? Two songs are enough to wake up your body and mood."
+        ]
+      },
+      {
+        id: 4,
+        title: "Wind‑Down Rituals",
+        date: "2025-10-20",
+        cover: "https://images.unsplash.com/photo-1505483531331-85b78802c4f9?q=80&w=1200&auto=format&fit=crop",
+        excerpt: "Gentle sounds to help you de‑stress and prep for sleep.",
+        tags: ["Sleep", "Calm"],
+        content: [
+          "Try a 10‑minute slow set: soft pads, acoustic guitar, or nature textures.",
+          "Lower volume gradually and dim the lights—teach your body it’s time to rest."
+        ]
+      }
+    ];
+
+    /* ---- App State ---- */
+    const state = {
+      prefs: load("mg:prefs") || { mood: "Happy", genres: ["Pop"] },
+      filters: { mood: new Set(), genre: new Set(), energy: new Set(), q: "" },
+      queue: [],
+      nowPlaying: null,
+      playlists: load("mg:playlists") || []
+    };
+
+    /* ---- Helpers ---- */
+    function $(sel, root=document){ return root.querySelector(sel); }
+    function $all(sel, root=document){ return [...root.querySelectorAll(sel)]; }
+    function load(key){ try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
+    function save(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+    function formatDuration(s){ const m = Math.floor(s/60), r = s%60; return `${m}:${String(r).padStart(2,"0")}`; }
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+    /* ---- Filter Chips ---- */
+    function renderChips(container, items, kind, {multi=true, max=Infinity, selected=[]}={}){
+      container.innerHTML = "";
+      items.forEach(item=>{
+        const btn = document.createElement("button");
+        btn.className = "chip";
+        btn.type = "button";
+        btn.textContent = item;
+
+        const isSelected = selected.includes(item);
+        if (isSelected){ btn.classList.add("active"); }
+        btn.setAttribute("aria-pressed", String(isSelected));
+
+        btn.addEventListener("click", ()=>{
+          const pressed = btn.classList.toggle("active");
+          btn.setAttribute("aria-pressed", String(pressed));
+          const set = state.filters[kind];
+
+          if (!multi){
+            $all(".chip", container).forEach(c=>{
+              if (c!==btn){ c.classList.remove("active"); c.setAttribute("aria-pressed","false"); }
+            });
+            set.clear();
+          }
+
+          if (pressed){
+            if (set.size >= max){ btn.classList.remove("active"); btn.setAttribute("aria-pressed","false"); return; }
+            set.add(item);
+          } else set.delete(item);
+
+          renderResults();
+        });
+
+        container.appendChild(btn);
+      });
+    }
+
+    function renderFilterBar(){
+      const moodGroup = document.querySelector('.chip-group[data-filter="mood"]');
+      const genreGroup = document.querySelector('.chip-group[data-filter="genre"]');
+      const energyGroup = document.querySelector('.chip-group[data-filter="energy"]');
+
+      const moodDefault = state.prefs.mood ? [state.prefs.mood] : [];
+      const genresDefault = state.prefs.genres || [];
+
+      state.filters.mood = new Set(moodDefault);
+      state.filters.genre = new Set(genresDefault);
+
+      renderChips(moodGroup, MOODS, "mood", {multi:false, selected: moodDefault});
+      renderChips(genreGroup, GENRES, "genre", {multi:true, max:3, selected: genresDefault});
+      renderChips(energyGroup, ENERGY, "energy", {multi:false});
+    }
+
+    /* ---- Track Cards & Results ---- */
+    function card(track){
+      const el = document.createElement("article");
+      el.className = "card";
+      el.innerHTML = `
+        <div class="cover" aria-hidden="true">${track.cover || "🎵"}</div>
+        <div class="meta">
+          <div class="title">${escapeHtml(track.title)}</div>
+          <div class="sub">${escapeHtml(track.artist)} • ${track.genres.join(", ")} • ${track.mood} • ${track.energy} • ${formatDuration(track.duration)}</div>
+          <div class="row">
+            <button class="play">Play</button>
+            <button class="secondary add" title="Add to queue (Ctrl/Cmd-click to add to first playlist)">+ Queue</button>
+          </div>
+        </div>
+      `;
+      el.querySelector(".play").addEventListener("click", ()=>playTrack(track));
+      el.querySelector(".add").addEventListener("click", (e)=>{
+        addToQueue(track);
+        // Pro tip: Ctrl/Cmd + click also adds to the first playlist if exists
+        if (e.metaKey || e.ctrlKey) addToFirstPlaylist(track);
+      });
+      return el;
+    }
+
+    function scoreTrack(t, prefs){
+      // Simple, tweakable rec scoring
+      let score = 0;
+      if (prefs.mood && t.mood === prefs.mood) score += 3;
+      const gset = new Set(prefs.genres || []);
+      t.genres.forEach(g => { if (gset.has(g)) score += 1; });
+      return score;
+    }
+
+    function renderResults(){
+      const q = state.filters.q.toLowerCase().trim();
+      const moodSel = [...state.filters.mood];
+      const genreSel = [...state.filters.genre];
+      const energySel = [...state.filters.energy];
+
+      const results = TRACKS
+        .filter(t => !q || t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q) ||
+                      t.genres.some(g=>g.toLowerCase().includes(q)) || t.mood.toLowerCase().includes(q))
+        .filter(t => !moodSel.length || moodSel.includes(t.mood))
+        .filter(t => !genreSel.length || t.genres.some(g=>genreSel.includes(g)))
+        .filter(t => !energySel.length || energySel.includes(t.energy))
+        .map(t => ({ t, s: scoreTrack(t, state.prefs) }))
+        .sort((a,b)=> b.s - a.s)
+        .map(x => x.t);
+
+      const container = $("#results");
+      container.innerHTML = "";
+      results.forEach(t=>container.appendChild(card(t)));
+    }
+
+    /* ---- Player & Queue ---- */
+    function playTrack(track){
+      state.nowPlaying = track;
+      $("#now-playing").textContent = `Now Playing: ${track.title} — ${track.artist}`;
+      if (!state.queue.length || state.queue[0]?.id !== track.id){
+        state.queue.unshift(track);
+      }
+      renderQueue();
+    }
+    function addToQueue(track){
+      state.queue.push(track);
+      renderQueue();
+    }
+    function renderQueue(){
+      const qbtn = $("#queue-btn");
+      const list = $("#queue-list");
+      list.innerHTML = "";
+      state.queue.forEach((t)=>{
+        const li = document.createElement("li");
+        li.textContent = `${t.title} — ${t.artist}`;
+        li.title = `${t.genres.join(", ")} • ${t.mood} • ${t.energy}`;
+        list.appendChild(li);
+      });
+      qbtn.onclick = ()=>{
+        const open = !list.hasAttribute("hidden");
+        list.toggleAttribute("hidden", open);
+        qbtn.setAttribute("aria-expanded", String(!open));
+      };
+    }
+
+    /* ---- Playlists ---- */
+    function renderPlaylists(){
+      const list = $("#playlist-list");
+      list.innerHTML = "";
+      if (!state.playlists.length){
+        const p = document.createElement("p");
+        p.textContent = "No playlists yet. Create one and add tracks from Discover.";
+        list.appendChild(p);
+        return;
+      }
+      state.playlists.forEach((pl, idx)=>{
+        const div = document.createElement("div");
+        div.className = "card";
+        const trackTitles = pl.tracks.map(id => TRACKS.find(t=>t.id===id)?.title).filter(Boolean);
+        div.innerHTML = `
+          <div class="meta">
+            <div class="title">${escapeHtml(pl.name)}</div>
+            <div class="sub">${pl.tracks.length} tracks</div>
+            <div class="row">
+              <layPlay All</button>
+              <eleteDelete</button>
+            </div>
+            <div class="sub">${trackTitles.join(" • ") || "No tracks yet."}</div>
+          </div>
+        `;
+        div.addEventListener("click", (e)=>{
+          const action = e.target?.dataset?.action;
+          if (action==="play"){
+            if (pl.tracks.length){
+              state.queue = pl.tracks.map(id=>TRACKS.find(t=>t.id===id)).filter(Boolean);
+              if (state.queue.length) playTrack(state.queue[0]);
+            }
+          } else if (action==="delete"){
+            if (confirm(`Delete playlist "${pl.name}"?`)){
+              state.playlists.splice(idx,1);
+              save("mg:playlists", state.playlists);
+              renderPlaylists();
+            }
+          }
+        });
+        list.appendChild(div);
+      });
+    }
+
+    function initCreatePlaylist(){
+      $("#create-playlist").addEventListener("submit", (e)=>{
+        e.preventDefault();
+        const name = $("#pl-name").value.trim() || `Playlist ${state.playlists.length+1}`;
+        state.playlists.push({ name, tracks: [] });
+        save("mg:playlists", state.playlists);
+        $("#pl-name").value = "";
+        renderPlaylists();
+      });
+    }
+
+    function addToFirstPlaylist(track){
+      if (!state.playlists.length) { alert("Create a playlist first."); return; }
+      state.playlists[0].tracks.push(track.id);
+      save("mg:playlists", state.playlists);
+      renderPlaylists();
+      alert(`Added "${track.title}" to "${state.playlists[0].name}"`);
+    }
+
+    /* ---- Profile / Preferences ---- */
+    function renderChipSet(container, items, selected, onChange, opts={}){
+      const { single=false, max=Infinity } = opts;
+      container.innerHTML = "";
+      const selSet = new Set(Array.isArray(selected)? selected : [selected]);
+      items.forEach(item=>{
+        const btn = document.createElement("button");
+        btn.className = "chip-toggle";
+        btn.type = "button";
+        const active = selSet.has(item);
+        btn.textContent = item;
+        btn.setAttribute("aria-pressed", String(active));
+        btn.addEventListener("click", ()=>{
+          if (single){
+            $all(".chip-toggle", container).forEach(b=>b.setAttribute("aria-pressed","false"));
+            btn.setAttribute("aria-pressed","true");
+            onChange(item);
+          } else {
+            const current = $all(".chip-toggle[aria-pressed='true']", container).map(b=>b.textContent);
+            if (btn.getAttribute("aria-pressed")==="true"){
+              btn.setAttribute("aria-pressed","false");
+              onChange(current.filter(v=>v!==item));
+            } else {
+              if (current.length >= max) return;
+              btn.setAttribute("aria-pressed","true");
+              onChange([...current, item]);
+            }
+          }
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    function renderPrefs(){
+      renderChipSet($("#pref-mood"), MOODS, state.prefs.mood, (val)=>{
+        state.prefs.mood = val; save("mg:prefs", state.prefs); renderFilterBar(); renderResults();
+      }, {single:true});
+
+      renderChipSet($("#pref-genre"), GENRES, state.prefs.genres||[], (vals)=>{
+        state.prefs.genres = vals.slice(0,3); save("mg:prefs", state.prefs); renderFilterBar(); renderResults();
+      }, {max:3});
+
+      $("#prefs-form").addEventListener("submit", (e)=>{
+        e.preventDefault();
+        alert("Preferences saved!");
+      });
+    }
+
+    /* ---- Tabs & Search ---- */
+    function initTabs(){
+      $all(".tab-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const tab = btn.dataset.tab;
+          $all(".tab-btn").forEach(b=>{ b.classList.toggle("active", b===btn); b.setAttribute("aria-pressed", String(b===btn)); });
+          $all(".tab").forEach(sec=>sec.classList.toggle("active", sec.id===tab));
+        });
+      });
+    }
+
+    function initSearch(){
+      $("#search").addEventListener("input", (e)=>{
+        state.filters.q = e.target.value;
+        renderResults();
+      });
+    }
+
+    /* ---- Onboarding ---- */
+    function maybeShowOnboarding(){
+      const dlg = $("#onboarding");
+      if (!dlg || localStorage.getItem("mg:onboarded")) return;
+
+      // Fill choices
+      renderChipSet($("#ob-moods"), MOODS, state.prefs.mood, (val)=>{ state.prefs.mood = val; }, {single:true});
+      renderChipSet($("#ob-genres"), GENRES, state.prefs.genres||[], (vals)=>{ state.prefs.genres = vals.slice(0,3); }, {max:3});
+
+      if (typeof dlg.showModal === "function"){
+        dlg.showModal();
+      } else {
+        dlg.setAttribute("open",""); // fallback
+      }
+
+      $("#save-onboard").addEventListener("click", ()=>{
+        localStorage.setItem("mg:onboarded", "1");
+        save("mg:prefs", state.prefs);
+        dlg.close();
+        renderFilterBar();
+        renderResults();
+      });
+      $("#skip-onboard").addEventListener("click", ()=>{
+        localStorage.setItem("mg:onboarded", "1");
+      });
+    }
+
+    /* ---- Blog: grid & reader ---- */
+    function renderBlog(){
+      const grid = document.getElementById("blog-grid");
+      if (!grid) return;
+
+      const frag = document.createDocumentFragment();
+      BLOG_POSTS.forEach(post => {
+        const card = document.createElement("article");
+        card.className = "post-card";
+        card.tabIndex = 0;
+        card.innerHTML = `
+          ${post.cover}
+          <div class="info">
+            <div class="title">${escapeHtml(post.title)}</div>
+            <div class="excerpt">${escapeHtml(post.excerpt)}</div>
+            <div class="meta">${formatBlogDate(post.date)}</div>
+            <div class="tags">${post.tags.map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>
+          </div>
+        `;
+        card.addEventListener("click", ()=> openPost(post.id));
+        card.addEventListener("keypress", (e)=>{ if (e.key === "Enter") openPost(post.id); });
+        frag.appendChild(card);
+      });
+      grid.innerHTML = "";
+      grid.appendChild(frag);
+
+      const closeBtn = document.getElementById("close-post");
+      if (closeBtn) closeBtn.onclick = closePost;
+    }
+
+    function formatBlogDate(iso){
+      try{
+        const d = new Date(iso);
+        return d.toLocaleDateString(undefined,{year:"numeric", month:"short", day:"numeric"});
+      } catch { return iso; }
+    }
+
+    function openPost(id){
+      const post = BLOG_POSTS.find(p=>p.id===id);
+      if (!post) return;
+      const dlg = document.getElementById("post-viewer");
+      if (!dlg) return;
+
+      document.getElementById("post-title").textContent = post.title;
+      document.getElementById("post-meta").textContent = formatBlogDate(post.date);
+
+      const cover = document.getElementById("post-cover");
+      cover.src = post.cover;
+      cover.alt = post.title;
+
+      const body = document.getElementById("post-body");
+      body.innerHTML = post.content.map(p => {
+        const trimmed = p.trim();
+        if (trimmed.startsWith("<img")) return trimmed; // allow explicit <img> HTML
+        if (/^https?:\/\//i.test(trimmed)) return `${trimmed}`; // treat URL as image
+        return `<p>${escapeHtml(trimmed)}</p>`;
+      }).join("");
+
+      const tags = document.getElementById("post-tags");
+      tags.innerHTML = post.tags.map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join("");
+
+      if (typeof dlg.showModal === "function") dlg.showModal();
+      else dlg.setAttribute("open",""); // fallback
+    }
+    function closePost(){
+      const dlg = document.getElementById("post-viewer");
+      if (!dlg) return;
+      if (typeof dlg.close === "function") dlg.close();
+      else dlg.removeAttribute("open");
+    }
+
+    /* ---- Bootstrap ---- */
+    function init(){
+      initTabs();
+      initSearch();
+      initCreatePlaylist();
+
+      renderFilterBar();
+      renderResults();
+      renderPlaylists();
+      renderPrefs();
+      renderQueue();
+      renderBlog();
+      maybeShowOnboarding();
+
+      // Player controls (mock)
+      $("#play").addEventListener("click", ()=>{
+        const btn = $("#play");
+        btn.textContent = (btn.textContent.includes("▶️")) ? "⏸️" : "▶️";
+      });
+      $("#prev").addEventListener("click", ()=>alert("Previous (mock)"));
+      $("#next").addEventListener("click", ()=>alert("Next (mock)"));
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
