@@ -408,6 +408,7 @@ body {
   color: var(--text);
   transition: all 0.2s ease;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .social-link:hover {
@@ -696,7 +697,7 @@ body {
   display: flex; 
   flex-wrap: wrap; 
   gap: var(--spacing-xs); 
-  margin-top: var(--spacing-sm); 
+  margin-top: var(--spacing-sm);
 }
 
 .btn-submit {
@@ -730,6 +731,7 @@ body {
   background: rgba(0,0,0,0.95); 
   border-top: 1px solid #0f1722; 
   backdrop-filter: blur(10px);
+  z-index: 50;
 }
 
 .player button { 
