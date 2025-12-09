@@ -1,224 +1,246 @@
-<header class="topbar" role="banner">
-  <div class="brand" onclick="showTab('home')">
-    <span class="logo" aria-hidden="true">🎧</span>
-    <h1 class="appname">MusiGroove</h1>
-  </div>
-  
-  <button class="burger-btn" id="burger" aria-label="Toggle menu" aria-expanded="false">
-    ☰
-  </button>
-  
-  <nav class="nav" role="navigation" aria-label="Main" id="main-nav">
-    <button class="tab-btn active" data-tab="home">Home</button>
-    <button class="tab-btn" data-tab="about">About</button>
-    <button class="tab-btn" data-tab="discover">Discover</button>
-    <button class="tab-btn" data-tab="my-playlists">My Playlists</button>
-    <button class="tab-btn" data-tab="blog">Blog</button>
-    <button class="tab-btn" data-tab="profile">Profile</button>
-  </nav>
-</header>
-
-<main id="app">
-  <section id="home" class="tab active">
-    <div class="hero-section">
-      <div class="hero-logo">🎧</div>
-      <h1 class="hero-title">MusiGroove</h1>
-      <p class="hero-tagline">Music Based on Your Mood, Wherever You Are</p>
-      <button class="cta-button" onclick="showTab('discover')">Become a Listener</button>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MusiGroove — Music Based on Your Mood</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar" role="banner">
+    <div class="brand" onclick="showTab('home')">
+      <span class="logo" aria-hidden="true">🎧</span>
+      <h1 class="appname">MusiGroove</h1>
     </div>
+    
+    <button class="burger-btn" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      ☰
+    </button>
+    
+    <nav class="nav" role="navigation" aria-label="Main" id="main-nav">
+      <button class="tab-btn active" data-tab="home">Home</button>
+      <button class="tab-btn" data-tab="about">About</button>
+      <button class="tab-btn" data-tab="discover">Discover</button>
+      <button class="tab-btn" data-tab="my-playlists">My Playlists</button>
+      <button class="tab-btn" data-tab="blog">Blog</button>
+      <button class="tab-btn" data-tab="profile">Profile</button>
+    </nav>
+  </header>
 
-    <div class="features-section">
+  <main id="app">
+    <!-- HOME PAGE -->
+    <section id="home" class="tab active">
+      <div class="hero-section">
+        <div class="hero-logo">🎧</div>
+        <h1 class="hero-title">MusiGroove</h1>
+        <p class="hero-tagline">Music Based on Your Mood, Wherever You Are</p>
+        <button class="cta-button" onclick="showTab('discover')">Become a Listener</button>
+      </div>
+
+      <div class="features-section">
+        <div class="container">
+          <div class="section-header">
+            <h2>Why MusiGroove?</h2>
+            <p>Discover music that matches your vibe, anytime, anywhere</p>
+          </div>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon">🎵</div>
+              <h3>Mood-Based Discovery</h3>
+              <p>Find the perfect tracks for how you're feeling right now—happy, chill, energetic, or focused.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">🎨</div>
+              <h3>Personalized Playlists</h3>
+              <p>Create and manage custom playlists tailored to your unique music taste and preferences.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">📚</div>
+              <h3>Science-Backed Insights</h3>
+              <p>Learn how music impacts your wellbeing through our curated blog with research-based tips.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="blog-preview-section">
+        <div class="container">
+          <div class="section-header">
+            <h2>Latest from Our Blog</h2>
+            <p>Explore how music can enhance your daily life</p>
+          </div>
+          <div class="blog-preview-grid" id="home-blog-preview"></div>
+          <button class="view-all-btn" onclick="showTab('blog')">View All Articles</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT PAGE -->
+    <section id="about" class="tab">
+      <div class="about-section">
+        <div class="about-content">
+          <h2>About MusiGroove</h2>
+          <p>
+            <strong>MusiGroove</strong> is your personalized music companion designed to match your mood, wherever you are. 
+            We believe music is more than entertainment—it's a powerful tool for enhancing your mental and emotional wellbeing.
+          </p>
+          <p>
+            Whether you need focus for deep work, energy for a workout, or calm for winding down, MusiGroove curates 
+            the perfect soundtrack for every moment of your day. Our platform combines intuitive mood-based filtering 
+            with science-backed insights to help you harness the transformative power of music.
+          </p>
+          <p>
+            Join thousands of listeners who've discovered a better way to experience music—one that adapts to you, 
+            not the other way around.
+          </p>
+          <button class="cta-button" style="margin-top: 24px;" onclick="showTab('discover')">Start Discovering Music</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- DISCOVER -->
+    <section id="discover" class="tab">
       <div class="container">
-        <div class="section-header">
-          <h2>Why MusiGroove?</h2>
-          <p>Discover music that matches your vibe, anytime, anywhere</p>
-        </div>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">🎵</div>
-            <h3>Mood-Based Discovery</h3>
-            <p>Find the perfect tracks for how you're feeling right now—happy, chill, energetic, or focused.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🎨</div>
-            <h3>Personalized Playlists</h3>
-            <p>Create and manage custom playlists tailored to your unique music taste and preferences.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📚</div>
-            <h3>Science-Backed Insights</h3>
-            <p>Learn how music impacts your wellbeing through our curated blog with research-based tips.</p>
-          </div>
-        </div>
-      </div>
-    </div>
+        <h2 class="visually-hidden">Discover</h2>
 
-    <div class="blog-preview-section">
+        <div class="search-hero">
+          <label for="search" class="visually-hidden">Search tracks</label>
+          <input id="search" type="search" placeholder="Search by song, artist, or vibe…" autocomplete="off" />
+        </div>
+
+        <div class="filters">
+          <div class="filter-row">
+            <span class="group-label">Mood</span>
+            <div class="chip-group" id="mood-chips"></div>
+          </div>
+          
+          <div class="filter-row">
+            <span class="group-label">Genre</span>
+            <div class="chip-group" id="genre-chips"></div>
+          </div>
+          
+          <div class="filter-row">
+            <span class="group-label">Energy</span>
+            <div class="chip-group" id="energy-chips"></div>
+          </div>
+        </div>
+
+        <section class="section">
+          <h3>Recommended for you</h3>
+          <div id="results" class="grid"></div>
+        </section>
+      </div>
+    </section>
+
+    <!-- MY PLAYLISTS -->
+    <section id="my-playlists" class="tab">
       <div class="container">
-        <div class="section-header">
-          <h2>Latest from Our Blog</h2>
-          <p>Explore how music can enhance your daily life</p>
-        </div>
-        <div class="blog-preview-grid" id="home-blog-preview"></div>
-        <button class="view-all-btn" onclick="showTab('blog')">View All Articles</button>
+        <h2>My Playlists</h2>
+        <form id="create-playlist" class="form-row">
+          <input type="text" id="pl-name" placeholder="New playlist name" />
+          <button type="submit">Create Playlist</button>
+        </form>
+        <div id="playlist-list" class="list"></div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="about" class="tab">
-    <div class="about-section">
-      <div class="about-content">
-        <h2>About MusiGroove</h2>
-        <p>
-          <strong>MusiGroove</strong> is your personalized music companion designed to match your mood, wherever you are. 
-          We believe music is more than entertainment—it's a powerful tool for enhancing your mental and emotional wellbeing.
-        </p>
-        <p>
-          Whether you need focus for deep work, energy for a workout, or calm for winding down, MusiGroove curates 
-          the perfect soundtrack for every moment of your day. Our platform combines intuitive mood-based filtering 
-          with science-backed insights to help you harness the transformative power of music.
-        </p>
-        <p>
-          Join thousands of listeners who've discovered a better way to experience music—one that adapts to you, 
-          not the other way around.
-        </p>
-        <button class="cta-button" style="margin-top: 24px;" onclick="showTab('discover')">Start Discovering Music</button>
+    <!-- BLOG -->
+    <section id="blog" class="tab">
+      <div class="container">
+        <h2>MusiGroove Blog</h2>
+        <div id="blog-grid" class="blog-grid"></div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="discover" class="tab">
-    <div class="container">
-      <h2 class="visually-hidden">Discover</h2>
-
-      <div class="search-hero">
-        <label for="search" class="visually-hidden">Search tracks</label>
-        <input id="search" type="search" placeholder="Search by song, artist, or vibe…" autocomplete="off" />
+    <!-- PROFILE -->
+    <section id="profile" class="tab">
+      <div class="container">
+        <h2>Profile & Preferences</h2>
+        <form id="prefs-form" class="prefs">
+          <fieldset>
+            <legend>Default Mood</legend>
+            <div id="pref-mood" class="chip-row"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Favorite Genres (up to 3)</legend>
+            <div id="pref-genre" class="chip-row"></div>
+          </fieldset>
+          <button type="submit" class="btn-submit">Save Preferences</button>
+        </form>
       </div>
+    </section>
+  </main>
 
-      <div class="filters">
-        <div class="filter-row">
-          <span class="group-label">Mood</span>
-          <div class="chip-group" id="mood-chips"></div>
-        </div>
-        
-        <div class="filter-row">
-          <span class="group-label">Genre</span>
-          <div class="chip-group" id="genre-chips"></div>
-        </div>
-        
-        <div class="filter-row">
-          <span class="group-label">Energy</span>
-          <div class="chip-group" id="energy-chips"></div>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>MusiGroove</h3>
+        <p>Music based on your mood, wherever you are. Discover the perfect soundtrack for every moment.</p>
+        <div class="social-links">
+          <a href="#" class="social-link" aria-label="Facebook" title="Facebook">📘</a>
+          <a href="#" class="social-link" aria-label="Twitter" title="Twitter">🐦</a>
+          <a href="#" class="social-link" aria-label="Instagram" title="Instagram">📷</a>
+          <a href="#" class="social-link" aria-label="YouTube" title="YouTube">▶️</a>
+          <a href="#" class="social-link" aria-label="Spotify" title="Spotify">🎵</a>
         </div>
       </div>
-
-      <section class="section">
-        <h3>Recommended for you</h3>
-        <div id="results" class="grid"></div>
-      </section>
-    </div>
-  </section>
-
-  <section id="my-playlists" class="tab">
-    <div class="container">
-      <h2>My Playlists</h2>
-      <form id="create-playlist" class="form-row">
-        <input type="text" id="pl-name" placeholder="New playlist name" />
-        <button type="submit">Create Playlist</button>
-      </form>
-      <div id="playlist-list" class="list"></div>
-    </div>
-  </section>
-
-  <section id="blog" class="tab">
-    <div class="container">
-      <h2>MusiGroove Blog</h2>
-      <div id="blog-grid" class="blog-grid"></div>
-    </div>
-  </section>
-
-  <section id="profile" class="tab">
-    <div class="container">
-      <h2>Profile & Preferences</h2>
-      <form id="prefs-form" class="prefs">
-        <fieldset>
-          <legend>Default Mood</legend>
-          <div id="pref-mood" class="chip-row"></div>
-        </fieldset>
-        <fieldset>
-          <legend>Favorite Genres (up to 3)</legend>
-          <div id="pref-genre" class="chip-row"></div>
-        </fieldset>
-        <button type="submit" class="btn-submit">Save Preferences</button>
-      </form>
-    </div>
-  </section>
-</main>
-
-<footer class="footer">
-  <div class="footer-content">
-    <div class="footer-section">
-      <h3>MusiGroove</h3>
-      <p>Music based on your mood, wherever you are. Discover the perfect soundtrack for every moment.</p>
-      <div class="social-links">
-        <a href="#" class="social-link" aria-label="Facebook" title="Facebook">📘</a>
-        <a href="#" class="social-link" aria-label="Twitter" title="Twitter">🐦</a>
-        <a href="#" class="social-link" aria-label="Instagram" title="Instagram">📷</a>
-        <a href="#" class="social-link" aria-label="YouTube" title="YouTube">▶️</a>
-        <a href="#" class="social-link" aria-label="Spotify" title="Spotify">🎵</a>
+      
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <p><a href="#" onclick="showTab('home'); return false;" style="color: var(--muted); text-decoration: none;">Home</a></p>
+        <p><a href="#" onclick="showTab('about'); return false;" style="color: var(--muted); text-decoration: none;">About</a></p>
+        <p><a href="#" onclick="showTab('discover'); return false;" style="color: var(--muted); text-decoration: none;">Discover</a></p>
+        <p><a href="#" onclick="showTab('blog'); return false;" style="color: var(--muted); text-decoration: none;">Blog</a></p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Stay Connected</h3>
+        <p>Join our mailing list for the latest music recommendations and wellness tips.</p>
+        <form class="newsletter-form" id="newsletter-form">
+          <input type="email" placeholder="Your email" required />
+          <button type="submit">Subscribe</button>
+        </form>
       </div>
     </div>
     
-    <div class="footer-section">
-      <h3>Quick Links</h3>
-      <p><a href="#" onclick="showTab('home'); return false;" style="color: var(--muted); text-decoration: none;">Home</a></p>
-      <p><a href="#" onclick="showTab('about'); return false;" style="color: var(--muted); text-decoration: none;">About</a></p>
-      <p><a href="#" onclick="showTab('discover'); return false;" style="color: var(--muted); text-decoration: none;">Discover</a></p>
-      <p><a href="#" onclick="showTab('blog'); return false;" style="color: var(--muted); text-decoration: none;">Blog</a></p>
+    <div class="footer-bottom">
+      <p>&copy; 2025 MusiGroove. All rights reserved. | Music for every mood, everywhere.</p>
     </div>
-    
-    <div class="footer-section">
-      <h3>Stay Connected</h3>
-      <p>Join our mailing list for the latest music recommendations and wellness tips.</p>
-      <form class="newsletter-form" id="newsletter-form">
-        <input type="email" placeholder="Your email" required />
-        <button type="submit">Subscribe</button>
-      </form>
+  </footer>
+
+  <!-- PLAYER BAR -->
+  <div class="player">
+    <div id="now-playing">Nothing playing</div>
+    <div class="controls">
+      <button id="prev" aria-label="Previous">⏮</button>
+      <button id="play" aria-label="Play/Pause">▶️</button>
+      <button id="next" aria-label="Next">⏭</button>
+    </div>
+    <div class="queue">
+      <button id="queue-btn">Queue ▾</button>
+      <ol id="queue-list" hidden></ol>
     </div>
   </div>
-  
-  <div class="footer-bottom">
-    <p>&copy; 2025 MusiGroove. All rights reserved. | Music for every mood, everywhere.</p>
-  </div>
-</footer>
 
-<div class="player">
-  <div id="now-playing">Nothing playing</div>
-  <div class="controls">
-    <button id="prev" aria-label="Previous">⏮</button>
-    <button id="play" aria-label="Play/Pause">▶️</button>
-    <button id="next" aria-label="Next">⏭</button>
-  </div>
-  <div class="queue">
-    <button id="queue-btn">Queue ▾</button>
-    <ol id="queue-list" hidden></ol>
-  </div>
-</div>
+  <!-- BLOG READER MODAL -->
+  <dialog id="post-viewer">
+    <article class="post-view">
+      <header class="post-hero">
+        <img id="post-cover" alt="" />
+        <div class="overlay">
+          <h3 id="post-title"></h3>
+          <p id="post-meta" class="meta"></p>
+        </div>
+      </header>
+      <div id="post-body" class="post-body"></div>
+      <footer class="post-footer">
+        <div id="post-tags" class="tags"></div>
+        <button id="close-post" class="btn">Close</button>
+      </footer>
+    </article>
+  </dialog>
 
-<dialog id="post-viewer">
-  <article class="post-view">
-    <header class="post-hero">
-      <img id="post-cover" alt="" />
-      <div class="overlay">
-        <h3 id="post-title"></h3>
-        <p id="post-meta" class="meta"></p>
-      </div>
-    </header>
-    <div id="post-body" class="post-body"></div>
-    <footer class="post-footer">
-      <div id="post-tags" class="tags"></div>
-      <button id="close-post" class="btn">Close</button>
-    </footer>
-  </article>
-</dialog>
+  <script src="script.js"></script>
+</body>
+</html>
